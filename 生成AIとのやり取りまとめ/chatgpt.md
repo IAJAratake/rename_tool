@@ -239,3 +239,72 @@ if __name__ == "__main__":
 ```
 
 この修正版では、`argparse`を使用して`config_file`引数を追加しました。スクリプトを実行する際に、`python script.py config.yaml`のようにコンフィグファイルのパスを指定します。その後、指定された設定ファイルを読み込んで、フォルダ内のファイルの名前を変更する処理が行われます。
+
+あなた
+拡張子を考慮して、変更後のファイル名はprefix+filename+suffix+extとなるようにしてください。
+
+ChatGPT
+ファイル名に拡張子を考慮して変更するように修正しましょう。拡張子を取得し、その後に接頭辞と接尾辞を追加します。
+
+```python
+import os
+import yaml
+import argparse
+
+def load_config(config_file):
+    """
+    YAML形式の設定ファイルを読み込みます。
+
+    Args:
+        config_file (str): 設定ファイルのパス。
+
+    Returns:
+        dict: 設定ファイルの内容を表す辞書。
+    """
+    with open(config_file, 'r') as f:
+        config = yaml.safe_load(f)
+    return config
+
+def rename_files_in_folder(target_dir):
+    """
+    フォルダ内のファイルの名前を変更します。
+
+    Args:
+        target_dir (dict): 変更対象のフォルダの情報を含む辞書。
+            'dir_name': 変更対象のフォルダのパス。
+            'prefix': ファイル名の接頭辞として追加される文字列。
+            'suffix': ファイル名の接尾辞として追加される文字列。
+
+    Returns:
+        list: 変更されたファイル名のリスト。
+    """
+    dir_name = target_dir['dir_name']
+    prefix = target_dir['prefix']
+    suffix = target_dir['suffix']
+    renamed_files = []
+
+    # フォルダ内のファイルをループして名前を変更
+    for filename in os.listdir(dir_name):
+        if os.path.isfile(os.path.join(dir_name, filename)):
+            basename, ext = os.path.splitext(filename)
+            new_filename = f"{prefix}{basename}{suffix}{ext}"
+            os.rename(os.path.join(dir_name, filename), os.path.join(dir_name, new_filename))
+            renamed_files.append(new_filename)
+            print(f"Renamed {filename} to {new_filename} in {dir_name}")
+
+    return renamed_files
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Rename files in folders based on YAML configuration")
+    parser.add_argument("config_file", type=str, help="Path to the YAML configuration file")
+    args = parser.parse_args()
+
+    config_file = args.config_file
+    config = load_config(config_file)
+
+    # 各フォルダに対してファイル名を変更する
+    for target_dir in config['target_dirs']:
+        rename_files_in_folder(target_dir)
+```
+
+この修正版では、ファイルの拡張子を取得し、それを変更後のファイル名に含めるようにしました。これにより、変更後のファイル名は`prefix + filename + suffix + ext`の形式になります。

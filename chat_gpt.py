@@ -2,7 +2,6 @@ import os
 import yaml
 import argparse
 
-
 def load_config(config_file):
     """
     YAML形式の設定ファイルを読み込みます。
@@ -13,10 +12,10 @@ def load_config(config_file):
     Returns:
         dict: 設定ファイルの内容を表す辞書。
     """
-    with open(config_file, 'r') as f:
+    # 文字コードの設定追加
+    with open(config_file, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     return config
-
 
 def rename_files_in_folder(target_dir):
     """
@@ -39,13 +38,13 @@ def rename_files_in_folder(target_dir):
     # フォルダ内のファイルをループして名前を変更
     for filename in os.listdir(dir_name):
         if os.path.isfile(os.path.join(dir_name, filename)):
-            new_filename = prefix + filename + suffix
+            basename, ext = os.path.splitext(filename)
+            new_filename = f"{prefix}{basename}{suffix}{ext}"
             os.rename(os.path.join(dir_name, filename), os.path.join(dir_name, new_filename))
             renamed_files.append(new_filename)
             print(f"Renamed {filename} to {new_filename} in {dir_name}")
 
     return renamed_files
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Rename files in folders based on YAML configuration")
