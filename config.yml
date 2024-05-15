@@ -1,0 +1,8 @@
+# 対象フォルダのパス・ファイル名の前に追加する文字列・後ろに追加する文字列を記載
+target_dirs:
+  - dir_name: ./sample
+    prefix: No_
+    suffix: _file
+#  - dir_name: ./folder/sample2
+#    prefix: No2_
+#    suffix: _file2
